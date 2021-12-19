@@ -2,9 +2,8 @@ import requests
 import logging
 import os
 from telegram.chataction import ChatAction
-from telegram.ext import Updater, CommandHandler 
+from telegram.ext import Updater, CommandHandler
 from dotenv import load_dotenv
-
 
 logging.basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
                     level=logging.INFO)
@@ -13,23 +12,25 @@ logger = logging.getLogger(__name__)
 load_dotenv()
 API_Token = os.getenv("API_Token")
 
-logger = logging.getLogger(__name__)
 
 def start(update, context) -> None:
-    """Start the conversation with the user."""
+    """ Start the conversation with the user. """
     logger.info(f"User {update.message.chat.first_name} started the bot")
     context.bot.send_chat_action(chat_id=update.message.chat_id, action=ChatAction.TYPING)
-    update.message.reply_text('Hello! This bot will define a word for you! \n Just send /define <your word> to get a definition!')
+    update.message.reply_text("""Hello! This bot will define a word for you!
+    \n Just send /define <your word> to get a definition!
+    \n Send /help for more commands \n""")
+
 
 def define(update, context) -> None:
-    """Define a word"""
+    """ Define a word using the Dictionary API. """
     word = context.args[0]
     logger.info(f"User {update.message.chat.first_name} wants to define: {word}")
 
     url = f"https://api.dictionaryapi.dev/api/v1/entries/en/{word}"
 
     response = requests.get(url).json()
-    logger.info(f"Checking API Response")
+    logger.info("Checking API Response")
     if type(response) == dict:
         logger.info(f"Could not find a defintion for: {word}")
         update.message.reply_text(f"Sorry, I couldn't find the word: {word}")
@@ -43,16 +44,27 @@ def define(update, context) -> None:
         logger.info(f"Sending definitions for: {word} to User: {update.message.chat.first_name}")
         context.bot.send_chat_action(chat_id=update.message.chat_id, action=ChatAction.TYPING)
         update.message.reply_text(f"{word}:\n {' '.join(definitions)}")
-    
+
+
 def source(update, context) -> None:
     """Source code"""
+    logger.info(f"User {update.message.chat.first_name} wants to see the source code")
     context.bot.send_chat_action(chat_id=update.message.chat_id, action=ChatAction.TYPING)
-    update.message.reply_text("Check out the source code here https://github.com/mascode/Telexicon. Feel free to contribute!")
+    update.message.reply_text("You can view the source code here https://github.com/mascode/Telexicon")
+
 
 def help(update, context) -> None:
     """Help command"""
+    logger.info(f"User {update.message.chat.first_name} asked for help")
     context.bot.send_chat_action(chat_id=update.message.chat_id, action=ChatAction.TYPING)
-    update.message.reply_text("Send /define <word> to get a definition of a word")
+    update.message.reply_text(""" Send /start to start the bot. \n Send /define
+    <your word> to get a definition. \n Send /source to see the source code. \n Send /help to see all commands. \n
+    Remember to use the / before the command! \n
+    Please keep in mind that if you want these commands as a menu then
+    you will have to set that up with the @BotFather. \n
+    For any questions or suggestions please contact me on the github page /source.
+    """)
+
 
 def main() -> None:
     """Start the bot."""
@@ -65,9 +77,10 @@ def main() -> None:
     dispatcher.add_handler(CommandHandler("source", source))
     dispatcher.add_handler(CommandHandler("help", help))
 
-
     updater.start_polling()
     updater.idle()
 
+
 if __name__ == '__main__':
+    logger.info("Starting bot")
     main()
