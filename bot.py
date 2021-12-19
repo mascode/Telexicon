@@ -16,7 +16,7 @@ API_Token = os.getenv("API_Token")
 logger = logging.getLogger(__name__)
 
 def start(update, context) -> None:
-    """Start the bot."""
+    """Start the conversation with the user."""
     logger.info(f"User {update.message.chat.first_name} started the bot")
     context.bot.send_chat_action(chat_id=update.message.chat_id, action=ChatAction.TYPING)
     update.message.reply_text('Hello! This bot will define a word for you! \n Just send /define <your word> to get a definition!')
@@ -47,7 +47,12 @@ def define(update, context) -> None:
 def source(update, context) -> None:
     """Source code"""
     context.bot.send_chat_action(chat_id=update.message.chat_id, action=ChatAction.TYPING)
-    update.message.reply_text("Check out the source code here ")
+    update.message.reply_text("Check out the source code here https://github.com/mascode/Telexicon. Feel free to contribute!")
+
+def help(update, context) -> None:
+    """Help command"""
+    context.bot.send_chat_action(chat_id=update.message.chat_id, action=ChatAction.TYPING)
+    update.message.reply_text("Send /define <word> to get a definition of a word")
 
 def main() -> None:
     """Start the bot."""
@@ -57,6 +62,9 @@ def main() -> None:
 
     dispatcher.add_handler(CommandHandler("start", start))
     dispatcher.add_handler(CommandHandler("define", define))
+    dispatcher.add_handler(CommandHandler("source", source))
+    dispatcher.add_handler(CommandHandler("help", help))
+
 
     updater.start_polling()
     updater.idle()
