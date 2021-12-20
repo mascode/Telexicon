@@ -38,14 +38,15 @@ def define(update, context) -> None:
     else:
         logger.info(f"Found a definition for: {word}")
         word = response[0]["word"]
+        phonetic = response[0]["phonetic"]
         definitions = []
         for meaning in response[0]["meaning"].values():
             for definition in meaning:
                 definitions.append(definition["definition"])
         logger.info(f"Sending definitions for: {word} to User: {update.message.chat.first_name}")
         context.bot.send_chat_action(chat_id=update.message.chat_id, action=ChatAction.TYPING)
-        reply = """ <b><u>{word}</u></b> :
-{definitions} """.format(word=word, definitions="\n\n".join(definitions))
+        reply = """ <b><u>{word} - {phonetic}</u></b> :
+{definitions} """.format(word=word, phonetic=phonetic, definitions="\n\n".join(definitions))
         update.message.reply_text(reply, parse_mode=ParseMode.HTML)
 
 
