@@ -57,17 +57,18 @@ def help(update, context) -> None:
     """Help command"""
     logger.info(f"User {update.message.chat.first_name} asked for help")
     context.bot.send_chat_action(chat_id=update.message.chat_id, action=ChatAction.TYPING)
-    update.message.reply_text(""" Send /start to start the bot. \n Send /define
-    <your word> to get a definition. \n Send /source to see the source code. \n Send /help to see all commands. \n
-    Remember to use the / before the command! \n
-    Please keep in mind that if you want these commands as a menu then
-    you will have to set that up with the @BotFather. \n
-    For any questions or suggestions please contact me on the github page /source.
+    update.message.reply_text(""" Send /start to start the bot.\n
+    Send /define <your word> to get a definition.\n
+    Send /source to see the source code.\n
+    Send /help to see all commands.\n
+    Remember to use the / before the command!\n
+    If you want these commands as a menu then you will have to set that up with the @BotFather.\n
+    For any questions or suggestions please see the github page with /source.
     """)
 
 
 def main() -> None:
-    """Start the bot."""
+    """ Start the bot. """
     updater = Updater(API_Token, use_context=True)
 
     dispatcher = updater.dispatcher
