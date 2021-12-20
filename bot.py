@@ -1,6 +1,7 @@
 import requests
 import logging
 import os
+from telegram import ParseMode
 from telegram.chataction import ChatAction
 from telegram.ext import Updater, CommandHandler
 from dotenv import load_dotenv
@@ -18,8 +19,8 @@ def start(update, context) -> None:
     logger.info(f"User {update.message.chat.first_name} started the bot")
     context.bot.send_chat_action(chat_id=update.message.chat_id, action=ChatAction.TYPING)
     update.message.reply_text("""Hello! This bot will define a word for you!
-    \n Just send /define <your word> to get a definition!
-    \n Send /help for more commands \n""")
+    \nJust send /define <your word> to get a definition!
+    \nSend /help for more commands""")
 
 
 def define(update, context) -> None:
@@ -43,7 +44,9 @@ def define(update, context) -> None:
                 definitions.append(definition["definition"])
         logger.info(f"Sending definitions for: {word} to User: {update.message.chat.first_name}")
         context.bot.send_chat_action(chat_id=update.message.chat_id, action=ChatAction.TYPING)
-        update.message.reply_text(f"{word}:\n {' '.join(definitions)}")
+        reply = """ <b><u>{word}</u></b> :
+{definitions} """.format(word=word, definitions="\n\n".join(definitions))
+        update.message.reply_text(reply, parse_mode=ParseMode.HTML)
 
 
 def source(update, context) -> None:
@@ -58,12 +61,12 @@ def help(update, context) -> None:
     logger.info(f"User {update.message.chat.first_name} asked for help")
     context.bot.send_chat_action(chat_id=update.message.chat_id, action=ChatAction.TYPING)
     update.message.reply_text(""" Send /start to start the bot.\n
-    Send /define <your word> to get a definition.\n
-    Send /source to see the source code.\n
-    Send /help to see all commands.\n
-    Remember to use the / before the command!\n
-    If you want these commands as a menu then you will have to set that up with the @BotFather.\n
-    For any questions or suggestions please see the github page with /source.
+Send /define your_word to get a definition.\n
+Send /source to see the source code.\n
+Send /help to see all commands.\n
+Remember to use the / before the command!\n
+If you want these commands as a menu then you will have to set that up with the @BotFather.\n
+For any questions or suggestions please see the github page with /source.\n
     """)
 
 
