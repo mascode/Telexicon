@@ -6,9 +6,11 @@ A self hosted dictionary for Telegram. This bot uses a dictionary API to look up
 
 This bot uses: 
 
--[PyDictionary](https://github.com/geekpradd/PyDictionary/) - For definitions
--[WordHoard](https://github.com/johnbumgarner/wordhoard) - For synonyms and antonyms
--[Python-Telegram-Bot](https://github.com/python-telegram-bot/python-telegram-bot) - API Wrapper for Telegram written in Python
+- [PyDictionary](https://github.com/geekpradd/PyDictionary/) - For definitions
+
+- [WordHoard](https://github.com/johnbumgarner/wordhoard) - For synonyms and antonyms
+
+- [Python-Telegram-Bot](https://github.com/python-telegram-bot/python-telegram-bot) - API Wrapper for Telegram written in Python
 
 ##### Commands
 
@@ -43,7 +45,6 @@ This bot uses:
 - In Config Vars add a new Key (API_Token) and Value (Your API Key)
 
 - Deploy
-
 
 #### Deploy on Caprover
 
