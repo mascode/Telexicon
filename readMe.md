@@ -2,11 +2,13 @@
 
 A self hosted dictionary for Telegram. This bot uses a dictionary API to look up words and send you the definitions. 
 
-##### APIs
+### Libraries
 
-The API that this bot uses is generously provided by the [Free Dictionary API](https://github.com/meetDeveloper/freeDictionaryAPI). No API key needed to use the service. Please support the project if you can. 
+This bot uses: 
 
-The bot also uses the [pytho-telegram-bot](https://github.com/python-telegram-bot/python-telegram-bot) API wrapper to interact with the Telegram API.
+-[PyDictionary](https://github.com/geekpradd/PyDictionary/) - For definitions
+-[WordHoard](https://github.com/johnbumgarner/wordhoard) - For synonyms and antonyms
+-[Python-Telegram-Bot](https://github.com/python-telegram-bot/python-telegram-bot) - API Wrapper for Telegram written in Python
 
 ##### Commands
 
@@ -16,11 +18,11 @@ The bot also uses the [pytho-telegram-bot](https://github.com/python-telegram-bo
 
 `/source - Get the source code (this page)`
 
-`/define - define a word`
+`/define - Define a word`
 
-##### Limitations
+`/synonym - Get the synonym(s) of a word`
 
-The dictionary API has a rate limit of 300 requests every 5 mins
+`/antonym - Get the antonym(s) of a word`
 
 ##### Setup
 
@@ -39,5 +41,14 @@ The dictionary API has a rate limit of 300 requests every 5 mins
 - Connect repository to account either through Heroku CLI or github
 
 - In Config Vars add a new Key (API_Token) and Value (Your API Key)
+
+- Deploy
+
+
+#### Deploy on Caprover
+
+- Connect repository to account 
+
+- Add you `API_Key` as an environment variable
 
 - Deploy
