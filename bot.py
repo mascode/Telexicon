@@ -1,10 +1,10 @@
-import requests
 import logging
 import os
-from telegram import ParseMode
 from telegram.chataction import ChatAction
 from telegram.ext import Updater, CommandHandler
 from dotenv import load_dotenv
+from PyDictionary import PyDictionary
+from wordhoard import Antonyms, Synonyms
 
 logging.basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
                     level=logging.INFO)
@@ -27,27 +27,50 @@ def define(update, context) -> None:
     """ Define a word using the Dictionary API. """
     word = context.args[0]
     logger.info(f"User {update.message.chat.first_name} wants to define: {word}")
+    context.bot.send_chat_action(chat_id=update.message.chat_id, action=ChatAction.TYPING)
+    Dictionary = PyDictionary()
+    Definition = Dictionary.meaning(word)
 
-    url = f"https://api.dictionaryapi.dev/api/v1/entries/en/{word}"
-
-    response = requests.get(url).json()
-    logger.info("Checking API Response")
-    if type(response) == dict:
-        logger.info(f"Could not find a defintion for: {word}")
-        update.message.reply_text(f"Sorry, I couldn't find the word: {word}")
+    if Definition is None or Definition == {}:
+        logger.info(f"Could not find a definition for {word}. Notifying user {update.message.chat.first_name} ")
+        update.message.reply_text(f"Sorry, I couldn't find a definition for: {word}. Try again and/or check spelling.")
     else:
-        logger.info(f"Found a definition for: {word}")
-        word = response[0]["word"]
-        phonetic = response[0]["phonetic"]
+        logger.info(f"Found a definition for {word}. Notifying user {update.message.chat.first_name} ")
         definitions = []
-        for meaning in response[0]["meaning"].values():
-            for definition in meaning:
-                definitions.append(definition["definition"])
-        logger.info(f"Sending definitions for: {word} to User: {update.message.chat.first_name}")
-        context.bot.send_chat_action(chat_id=update.message.chat_id, action=ChatAction.TYPING)
-        reply = """ <b><u>{word} - {phonetic}</u></b> :
-{definitions} """.format(word=word, phonetic=phonetic, definitions="\n\n".join(definitions))
-        update.message.reply_text(reply, parse_mode=ParseMode.HTML)
+        for key, value in Definition.items():
+            definitions.append(f"{key}: {value}")
+        update.message.reply_text(f"{word}: \n\n".capitalize() + "\n\n".join(definitions))
+        logger.info(f"Sent the definition(s) for {word} to user {update.message.chat.first_name}")
+
+
+def antonym(update, context) -> None:
+    """Antonyms of a word"""
+    word = context.args[0]
+    logger.info(f"User {update.message.chat.first_name} wants to find antonyms for: {word}")
+    context.bot.send_chat_action(chat_id=update.message.chat_id, action=ChatAction.TYPING)
+    antonym = Antonyms(word)
+    results = antonym.find_antonyms()
+    if results == []:
+        logger.info(f"Could not find antonym for {word}. Notifying user {update.message.chat.first_name} ")
+        update.message.reply_text(f"Sorry, I couldn't find any antonyms for: {word}")
+    else:
+        logger.info(f"Found antonyms for {word}. Notifying user {update.message.chat.first_name} ")
+        update.message.reply_text(", ".join(results))
+
+
+def synonym(update, context) -> None:
+    """Synonyms of a word"""
+    word = context.args[0]
+    logger.info(f"User {update.message.chat.first_name} wants to find synonyms for: {word}")
+    context.bot.send_chat_action(chat_id=update.message.chat_id, action=ChatAction.TYPING)
+    synonym = Synonyms(word)
+    results = synonym.find_synonyms()
+    if results == []:
+        logger.info(f"Could not find synonyms for {word}. Notifying user {update.message.chat.first_name} ")
+        update.message.reply_text(f"Sorry, I couldn't find any synonyms for: {word}")
+    else:
+        logger.info(f"Found synonyms for {word}. Notifying user {update.message.chat.first_name} ")
+        update.message.reply_text(", ".join(results))
 
 
 def source(update, context) -> None:
@@ -80,6 +103,8 @@ def main() -> None:
     dispatcher.add_handler(CommandHandler("start", start))
     dispatcher.add_handler(CommandHandler("define", define))
     dispatcher.add_handler(CommandHandler("source", source))
+    dispatcher.add_handler(CommandHandler("synonym", synonym))
+    dispatcher.add_handler(CommandHandler("antonym", antonym))
     dispatcher.add_handler(CommandHandler("help", help))
 
     updater.start_polling()
